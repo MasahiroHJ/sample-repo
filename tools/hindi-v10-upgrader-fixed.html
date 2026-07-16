@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hindi Learning App v10 修正版ビルダー</title>
+<style>
+:root{font-family:Inter,"Noto Sans JP",system-ui,sans-serif;color:#1f2937;background:#fff8ef}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(135deg,#fff8ef,#f6f4ff)}.wrap{max-width:980px;margin:auto;padding:30px 18px 60px}.hero,.panel{background:#fff;border:1px solid #eadcc9;border-radius:24px;box-shadow:0 16px 48px #50301818}.hero{padding:28px;display:grid;grid-template-columns:1fr 260px;gap:22px;align-items:center}.hero h1{font-size:clamp(28px,5vw,46px);line-height:1.12;margin:8px 0}.hero p{color:#5f6878;line-height:1.75}.flag{font-weight:850;color:#b54e24}.scene{height:210px;border-radius:20px;overflow:hidden;background:linear-gradient(135deg,#f7b04d,#e85d65);position:relative}.scene:before{content:"";position:absolute;inset:22px;background:radial-gradient(circle at 25% 35%,#fff8 0 8%,transparent 9%),linear-gradient(145deg,#fff5,#fff0);border-radius:50px}.scene:after{content:"नमस्ते";position:absolute;left:26px;bottom:24px;font-size:42px;font-weight:900;color:white;text-shadow:0 4px 18px #0005}.panel{margin-top:18px;padding:24px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{padding:15px;border:1px solid #f0d7ad;border-radius:16px;background:#fff8e9}.card b{display:block;margin-bottom:6px}.pick{display:grid;gap:12px;margin-top:18px}label{font-weight:800}input[type=file]{width:100%;padding:16px;border:2px dashed #d9b882;border-radius:15px;background:#fffcf7}.hint{font-size:13px;line-height:1.6;color:#667085}.status{min-height:80px;white-space:pre-wrap;padding:14px;border-radius:14px;background:#f3f6fa;color:#465268;border:1px solid #e1e7ef}.status.ok{background:#ecfdf3;color:#166534;border-color:#bbf7d0}.status.err{background:#fff1f2;color:#9f1239;border-color:#fecdd3}button{border:0;border-radius:14px;padding:15px 22px;font-size:16px;font-weight:850;cursor:pointer;color:#fff;background:linear-gradient(135deg,#e85d36,#f59e0b);box-shadow:0 9px 22px #e85d3630}button:disabled{opacity:.45;cursor:not-allowed}.note{padding:13px 15px;border-left:5px solid #7c3aed;background:#f7f3ff;border-radius:10px;color:#504466;line-height:1.65}@media(max-width:720px){.hero{grid-template-columns:1fr}.scene{height:145px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero"><div><div class="flag">FIXED BUILDER · A0–C1</div><h1>Hindi Learning App<br>v10 完成版ビルダー</h1><p>旧アップグレーダーの構文エラーを修正しました。ZIP内にあるアニメ調PNG・JPGを自動検出し、文法・語彙・RolePlayへ再割り当てします。</p></div><div class="scene"></div></section>
+<section class="panel">
+<h2>実装される内容</h2>
+<div class="grid"><div class="card"><b>全体レイアウト再設計</b>PCは左ナビ、タブレット・スマートフォンは横ナビと1列表示へ切り替えます。</div><div class="card"><b>アニメ調画像を維持</b>ZIP内のPNG・JPG・WebPを優先し、抽象SVGへの逆戻りを防ぎます。</div><div class="card"><b>RolePlay拡充</b>A1〜C1の生活・旅行・医療・仕事・文化シナリオを15件追加します。</div></div>
+<div class="pick">
+<label for="zipInput">1. 元のアプリZIP</label>
+<input id="zipInput" type="file" accept=".zip,application/zip">
+<label for="imageInput">2. 追加の場面画像（任意・複数選択）</label>
+<input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+<div class="hint">元ZIPに十分なアニメ画像がある場合、追加画像は不要です。追加する場合は、教室→市場→レストラン→病院→家庭→職場→道案内→祭り→会話の順で選ぶと割り当てが安定します。</div>
+<button id="buildBtn" disabled>v10 完成版ZIPを生成</button>
+<div id="status" class="status">元のZIPを選択してください。</div>
+<div class="note">処理はブラウザ内で完結します。ZIP・画像・学習履歴はサーバーへ送信されません。</div>
+</div>
+</section>
+</div>
+<script>
+const zipInput=document.getElementById('zipInput');
+const imageInput=document.getElementById('imageInput');
+const buildBtn=document.getElementById('buildBtn');
+const statusBox=document.getElementById('status');
+zipInput.addEventListener('change',()=>{buildBtn.disabled=!zipInput.files.length;setStatus(zipInput.files.length?'選択済み: '+zipInput.files[0].name:'元のZIPを選択してください。')});
+function setStatus(text,type=''){statusBox.textContent=text;statusBox.className='status'+(type?' '+type:'')}
+function loadScript(url){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=url;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)})}
+async function ensureJSZip(){if(window.JSZip)return;const urls=['https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js','https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js','https://unpkg.com/jszip@3.10.1/dist/jszip.min.js'];for(const u of urls){try{await loadScript(u);if(window.JSZip)return}catch(e){}}throw new Error('ZIPライブラリを読み込めません。ネットワーク制限を確認してください。')}
+async function getTemplates(){const r=await fetch('./hindi-v10-upgrader.html?fixed=1',{cache:'no-store'});if(!r.ok)throw new Error('実装テンプレートを取得できません。');const src=await r.text();const doc=new DOMParser().parseFromString(src,'text/html');const css=doc.querySelector('#v10-css')?.textContent?.trim();const role=doc.querySelector('#v10-roleplay')?.textContent?.trim();const enhance=doc.querySelector('#v10-enhance')?.textContent?.trim();if(!css||!role||!enhance)throw new Error('実装テンプレートが不完全です。');return{css,role,enhance}}
+function safeName(name){return name.replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/^-+|-+$/g,'')||'scene.png'}
+function pickImage(paths,patterns,used){for(const re of patterns){const p=paths.find(x=>!used.has(x)&&re.test(x.toLowerCase()));if(p){used.add(p);return p}}const p=paths.find(x=>!used.has(x));if(p){used.add(p);return p}return paths[0]||null}
+function buildImageMap(paths){const used=new Set();const map={};map.classroom=pickImage(paths,[/class|school|lesson|devanagari|hindi|教室/],used);map.market=pickImage(paths,[/market|bazaar|shop|bargain|市場|買/],used);map.restaurant=pickImage(paths,[/restaurant|food|dinner|cafe|レストラン|食/],used);map.clinic=pickImage(paths,[/clinic|doctor|hospital|medical|医師|病院/],used);map.family=pickImage(paths,[/family|home|house|家族|家庭/],used);map.office=pickImage(paths,[/office|meeting|work|business|会議|職場/],used);map.directions=pickImage(paths,[/direction|street|road|gate|道案内|街/],used);map.festival=pickImage(paths,[/festival|diwali|wedding|祭り|結婚/],used);map.conversation=pickImage(paths,[/conversation|intro|social|会話|カフェ/],used);map.hotel=map.directions||map.family;map.transport=map.directions||map.market;map.support=map.office||map.classroom;return map}
+function replaceAssets(code,map){const keys=['classroom','market','restaurant','clinic','family','office','directions','festival','hotel','transport','support','conversation'];for(const k of keys){if(map[k])code=code.split('assets/v10/'+k+'.svg').join(map[k])}return code}
+function insertBefore(text,needle,addition){const i=text.indexOf(needle);if(i<0)return text+addition;return text.slice(0,i)+addition+'\n'+text.slice(i)}
+async function addOptionalImages(zip,root){const out=[];const files=[...imageInput.files];const order=['classroom','market','restaurant','clinic','family','office','directions','festival','conversation'];for(let i=0;i<files.length;i++){const f=files[i];const ext=(f.name.match(/\.(png|jpe?g|webp)$/i)||['','.png'])[1].toLowerCase().replace('jpeg','jpg');const base=order[i]||('extra-'+(i+1));const rel='assets/v10/anime/'+base+'.'+ext;zip.file(root+rel,await f.arrayBuffer());out.push(rel)}return out}
+buildBtn.addEventListener('click',async()=>{try{buildBtn.disabled=true;setStatus('修正版ビルダーを準備しています…');await ensureJSZip();const templates=await getTemplates();setStatus('元のZIPを解析しています…');const zip=await JSZip.loadAsync(await zipInput.files[0].arrayBuffer());const allPaths=Object.keys(zip.files);const indexPath=allPaths.find(p=>/index\.html$/i.test(p)&&!zip.files[p].dir);if(!indexPath)throw new Error('index.htmlが見つかりません。');const root=indexPath.slice(0,-'index.html'.length);const optional=await addOptionalImages(zip,root);const existing=allPaths.filter(p=>p.startsWith(root)&&/\.(png|jpe?g|webp)$/i.test(p)&&!zip.files[p].dir).map(p=>p.slice(root.length));const raster=[...optional,...existing.filter(x=>!optional.includes(x))];if(!raster.length)throw new Error('アニメ調PNG/JPGがZIP内にありません。追加の場面画像を選択してください。');const map=buildImageMap(raster);let enhance=replaceAssets(templates.enhance,map);let role=replaceAssets(templates.role,map);let index=await zip.file(indexPath).async('string');index=index.replace(/<title>.*?<\/title>/i,'<title>Hindi A0–C1 Guided Learning v10</title>');if(!index.includes('v10Layout.css'))index=index.replace('</head>','  <link rel="stylesheet" href="v10Layout.css">\n</head>');const roleTag='<scr'+'ipt src="v10RoleplayExpansion.js"></scr'+'ipt>';
+if(!index.includes('v10RoleplayExpansion.js')){const target='<scr'+'ipt src="cultureApp.js"></scr'+'ipt>';index=index.includes(target)?index.replace(target,roleTag+'\n  '+target):insertBefore(index,'</body>','  '+roleTag)}
+const enhanceTag='<scr'+'ipt src="v10Enhancements.js"></scr'+'ipt>';if(!index.includes('v10Enhancements.js'))index=insertBefore(index,'</body>','  '+enhanceTag);zip.file(indexPath,index);zip.file(root+'v10Layout.css',templates.css);zip.file(root+'v10RoleplayExpansion.js',role);zip.file(root+'v10Enhancements.js',enhance);zip.file(root+'V10_UPDATE.md','# Hindi Learning App v10\n\n- Guided A0–C1 dashboard\n- Responsive layout redesign\n- Existing anime raster images reused by scene\n- 15 additional RolePlay scenarios\n');setStatus('完成版ZIPを生成しています…');const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},m=>setStatus('ZIP生成中: '+Math.round(m.percent)+'%'));const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hindi_learning_app_v10_guided_anime_roleplay.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),30000);setStatus('完成しました。ダウンロードされたZIPを展開し、index.htmlを開いてください。','ok')}catch(e){console.error(e);setStatus('エラー: '+(e?.message||e),'err')}finally{buildBtn.disabled=!zipInput.files.length}});
+</script>
+</body>
+</html>
